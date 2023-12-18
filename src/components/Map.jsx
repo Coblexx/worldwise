@@ -1,8 +1,9 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useState } from "react";
+import { useCities } from "../context/CititesContext";
 
 import styles from "./Map.module.css";
-import { useState } from "react";
 
 function Map() {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ function Map() {
   const [searchParams, setSearchParams] = useSearchParams();
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
+
+  const { cities } = useCities();
 
   return (
     <div className={styles.mapContainer}>
@@ -24,13 +27,21 @@ function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.fr/hot/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={mapPosition}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+
+        {cities.map((city) => {
+          return (
+            <Marker
+              position={[city.position.lat, city.position.lng]}
+              key={city.id}
+            >
+              <Popup>
+                <span>{city.emoji}</span>
+                <span>{city.cityName}</span>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
-      ,
     </div>
   );
 }
