@@ -26,6 +26,8 @@ function Form() {
   const [lat, lng] = useURLPosition();
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
 
+  const [emoji, setEmoji] = useState("");
+
   useEffect(
     function () {
       async function fetchCityData() {
@@ -35,7 +37,10 @@ function Form() {
             `${BASE_URL}?latitude=${lat}&longitude=${lng}`
           );
           const data = await res.json();
-          console.log(data);
+          // console.log(data);
+          setCityName(data.city || data.locality || "");
+          setCountry(data.countryName);
+          setEmoji(data.countryCode);
         } catch (err) {
           throw new Error(err);
         } finally {
@@ -56,7 +61,7 @@ function Form() {
           onChange={(e) => setCityName(e.target.value)}
           value={cityName}
         />
-        {/* <span className={styles.flag}>{emoji}</span> */}
+        <span className={styles.flag}>{emoji}</span>
       </div>
 
       <div className={styles.row}>
